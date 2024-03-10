@@ -6,8 +6,6 @@ project(xmath
   LANGUAGES     C
 )
 
-include(cmake/FetchCMocka.cmake)
-
 option(BUILD_STATIC "Build as static library" ON)
 option(BUILD_TESTS "Build unit tests" ON)
 option(BUILD_DOCS "Build HTML docs" ON)
@@ -21,8 +19,13 @@ if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
   add_definitions("-g")
 endif()
 
-set(HEADERS xmath.h)
-set(SOURCES xmath.c)
+
+include(cmake/FetchCMocka.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(M)
+
+set(HEADERS xmath.h scalar.h vec3.h)
+set(SOURCES xmath.c scalar.c vec3.c)
 
 if(BUILD_STATIC)
   add_library(xmath STATIC)
@@ -34,6 +37,9 @@ target_sources(xmath
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS}
 )
+if(HAVE_M)
+  target_link_libraries(xmath PRIVATE m)
+endif()
 
 if(BUILD_TESTS)
   enable_testing()
@@ -44,9 +50,12 @@ if(BUILD_TESTS)
   endmacro()
 
   setup_test(xmath)
+  setup_test(scalar)
+  setup_test(vec3)
 endif()
 
-set_target_properties(xmath PROPERTIES PUBLIC_HEADER ${HEADERS})
+list(JOIN HEADERS ";" PUBLIC_HEADERS)
+set_target_properties(xmath PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
 install(
   TARGETS xmath
   PUBLIC_HEADER DESTINATION xmath
