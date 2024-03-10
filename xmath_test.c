@@ -5,9 +5,11 @@
 #include <cmocka.h>
 // clang-format on
 
+#include "xmath.h"
+
 static void test_dummy(void **state) {
   (void)state;
-  assert_int_equal(0, 0);
+  assert_int_equal(1, XMathHello());
 }
 
 int main() {
