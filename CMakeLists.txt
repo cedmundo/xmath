@@ -19,7 +19,6 @@ if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
   add_definitions("-g")
 endif()
 
-
 include(cmake/FetchCMocka.cmake)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(M)
@@ -43,11 +42,11 @@ endif()
 
 if(BUILD_TESTS)
   enable_testing()
-  macro(setup_test TEST_SUBJECT)
+  function(setup_test TEST_SUBJECT)
     add_executable(${TEST_SUBJECT}_test ${TEST_SUBJECT}_test.c ${ARGN})
     target_link_libraries(${TEST_SUBJECT}_test xmath cmocka)
-    add_test(TEST ${TEST_SUBJECT}_test COMMAND ${TEST_SUBJECT})
-  endmacro()
+    add_test(NAME ${TEST_SUBJECT}_test COMMAND ${TEST_SUBJECT}_test)
+  endfunction()
 
   setup_test(xmath)
   setup_test(scalar)
