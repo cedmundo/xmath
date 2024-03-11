@@ -5,10 +5,11 @@
 #include <cmocka.h>
 // clang-format on
 
+#include "common_testing.h"
 #include "scalar.h"
 
 static void test_FEqualApprox(void** state) {
-  (void)state;
+  UNUSED(state);
 
   assert_true(FEqualApprox(1.0f, 1.0f));
   assert_true(FEqualApprox(1.0f, 1.00000001f));
@@ -16,7 +17,7 @@ static void test_FEqualApprox(void** state) {
 }
 
 static void test_FMaxFMin(void **state) {
-  (void)state;
+  UNUSED(state);
 
   assert_float_equal(FMax(1.0f, 0.0f), 1.0f, XMATH_EPSILON);
   assert_float_equal(FMax(1.0f, -1.0f), 1.0f, XMATH_EPSILON);
@@ -28,7 +29,7 @@ static void test_FMaxFMin(void **state) {
 }
 
 static void test_FLerpLRemap(void **state) {
-  (void)state;
+  UNUSED(state);
 
   assert_float_equal(FLerp(0.0f, 10.0f, 0.5f), 5.0f, XMATH_EPSILON);
   assert_float_equal(FLerp(0.0f, 10.0f, 0.25f), 2.5f, XMATH_EPSILON);
@@ -36,7 +37,7 @@ static void test_FLerpLRemap(void **state) {
 }
 
 static void test_FDegRad(void **state) {
-  (void)state;
+  UNUSED(state);
 
   assert_float_equal(FDeg2Rad(0.0f), 0.0f, XMATH_EPSILON);
   assert_float_equal(FDeg2Rad(90.0f), 1.570796f, XMATH_EPSILON);
@@ -48,8 +49,8 @@ static void test_FDegRad(void **state) {
 }
 
 int main() {
-  (void)(jmp_buf*)0;
-  (void)(va_list*)0;
+  UNUSED_TYPE(jmp_buf);
+  UNUSED_TYPE(va_list);
 
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_FEqualApprox),
