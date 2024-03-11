@@ -6,7 +6,14 @@
 #define XMATH_SCALAR_H
 #include <stdbool.h>
 
+/**
+ * Epsilon constant (what is assumed as a discriminable value) (Enough for game dev).
+ */
 #define XMATH_EPSILON (0.000001f)
+
+/**
+ * Fairly precise PI constant. (Enough for game dev).
+ */
 #define XMATH_PI (3.1415926f)
 
 /**
