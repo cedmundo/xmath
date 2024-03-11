@@ -5,11 +5,8 @@
 #ifndef XMATH_H
 #define XMATH_H
 
-/**
- * \brief Greets in XMATH.
- *
- * Just prints out the message of the day.
- */
-int XMathHello();
+#include "scalar.h"
+#include "vec2.h"
+#include "vec3.h"
 
 #endif /* XMATH_H */

@@ -5,18 +5,20 @@
 #include <cmocka.h>
 // clang-format on
 
-#include "xmath.h"
+#include "common_testing.h"
+#include "vec2.h"
 
-static void test_dummy(void **state) {
-  (void)state;
-  assert_int_equal(1, XMathHello());
+static void test_example(void** state) {
+  UNUSED(state);
+  assert_true(1);
 }
 
 int main() {
-  (void)(jmp_buf *)0;
-  (void)(va_list *)0;
+  UNUSED_TYPE(jmp_buf);
+  UNUSED_TYPE(va_list);
+
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(test_dummy),
+      cmocka_unit_test(test_example),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
