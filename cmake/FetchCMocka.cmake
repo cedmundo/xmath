@@ -26,8 +26,7 @@ FetchContent_Declare(
         GIT_SHALLOW 1
 )
 
-set(WITH_STATIC_LIB ON CACHE BOOL "CMocka: Build with a static library" FORCE)
-set(WITH_CMOCKERY_SUPPORT OFF CACHE BOOL "CMocka: Install a cmockery header" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "CMocka: Build with a static library" FORCE)
 set(WITH_EXAMPLES OFF CACHE BOOL "CMocka: Build examples" FORCE)
 set(UNIT_TESTING OFF CACHE BOOL "CMocka: Build with unit testing" FORCE)
 set(PICKY_DEVELOPER OFF CACHE BOOL "CMocka: Build with picky developer flags" FORCE)
