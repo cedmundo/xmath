@@ -72,7 +72,7 @@ Vec2 Vec2Scale(Vec2 v, float f);
  * Calculates the standard length of a vector without doing the square root saving
  * a little bit of resources.
  * @param v vector.
- * @return vector's length.
+ * @return squared vector's length.
  */
 float Vec2SqrLen(Vec2 v);
 

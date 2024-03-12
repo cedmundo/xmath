@@ -36,7 +36,7 @@ target_sources(xmath
   PRIVATE ${SOURCES}
   PUBLIC ${HEADERS}
 )
-if(HAVE_M)
+if(NOT WIN32 AND HAVE_M)
   target_link_libraries(xmath PRIVATE m)
 endif()
 
