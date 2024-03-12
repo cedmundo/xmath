@@ -13,15 +13,15 @@ bool Vec3EqualApprox(Vec3 a, Vec3 b) {
 }
 
 Vec3 Vec3Add(Vec3 a, Vec3 b) {
-  return (Vec3) { a.x + b.x, a.y + b.y, a.z + b.z };
+  return (Vec3){a.x + b.x, a.y + b.y, a.z + b.z};
 }
 
 Vec3 Vec3Sub(Vec3 a, Vec3 b) {
-  return (Vec3) { a.x - b.x, a.y - b.y, a.z - b.z };
+  return (Vec3){a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
 Vec3 Vec3Scale(Vec3 v, float s) {
-  return (Vec3) { v.x * s, v.y * s, v.z * s };
+  return (Vec3){v.x * s, v.y * s, v.z * s};
 }
 
 float Vec3SqrLen(Vec3 v) {
@@ -74,7 +74,7 @@ float Vec3Dot(Vec3 a, Vec3 b) {
 }
 
 Vec3 Vec3Cross(Vec3 l, Vec3 r) {
-  return (Vec3) {
+  return (Vec3){
       l.y * r.z - l.z * r.y,
       l.z * r.x - l.x * r.z,
       l.x * r.y - l.y * r.x,
@@ -97,12 +97,13 @@ Vec3 Vec3Reject(Vec3 a, Vec3 b) {
 }
 
 Vec3 Vec3Reflect(Vec3 a, Vec3 b) {
-  Vec3 proj2 = Vec3Scale(Vec3Project(a, b), 2);
-  return Vec3Sub(a, proj2);
+  Vec3 n = Vec3Norm(b);
+  Vec3 r = Vec3Sub(a, Vec3Scale(n, 2 * Vec3Dot(a, n)));
+  return r;
 }
 
 Vec3 Vec3Lerp(Vec3 a, Vec3 b, float f) {
-  return (Vec3) {
+  return (Vec3){
       a.x + (b.x - a.x) * f,
       a.y + (b.y - a.y) * f,
       a.z + (b.z - a.z) * f,
@@ -118,7 +119,7 @@ Vec3 Vec3Slerp(Vec3 a, Vec3 b, float f) {
   Vec3 to = Vec3Norm(b);
 
   float theta = Vec3Angle(from, to);
-  float sin_theta =  sinf(theta);
+  float sin_theta = sinf(theta);
 
   float fa = sinf((1.0f - f) * theta) / sin_theta;
   float fb = sinf(f * theta) / sin_theta;
@@ -126,7 +127,7 @@ Vec3 Vec3Slerp(Vec3 a, Vec3 b, float f) {
 }
 
 Vec3 Vec3Nlerp(Vec3 a, Vec3 b, float f) {
-  Vec3 r = (Vec3) {
+  Vec3 r = (Vec3){
       a.x + (b.x - a.x) * f,
       a.y + (b.y - a.y) * f,
       a.z + (b.z - a.z) * f,

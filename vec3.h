@@ -48,10 +48,11 @@ static const Vec3 Vec3Backward = {0.0f, 0.0f, 1.0f};
  * @param vec reference of the vector.
  * @return The address of first component.
  */
-float *Vec3Floats(Vec3 *vec);
+float* Vec3Floats(Vec3* vec);
 
 /**
- * @brief Compare the components of two vectors and return if they are approx equal.
+ * @brief Compare the components of two vectors and return if they are approx
+ * equal.
  * @param a first vector.
  * @param b second vector.
  * @return true if a components are near b components.
@@ -85,8 +86,8 @@ Vec3 Vec3Scale(Vec3 v, float s);
 /**
  * @brief Squared length of a 3d vector.
  *
- * Calculates the standard length of a vector without doing the square root saving
- * a little bit of resources.
+ * Calculates the standard length of a vector without doing the square root
+ * saving a little bit of resources.
  * @param v a vector (unaffected).
  * @return squared vector length.
  */

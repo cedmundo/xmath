@@ -4,6 +4,7 @@
  */
 #ifndef XMATH_VEC2_H
 #define XMATH_VEC2_H
+#include <stdbool.h>
 
 /**
  * @brief Vector of two dimensions.
@@ -20,22 +21,23 @@ typedef struct {
 /**
  * A 2d vector containing only zeroes.
  */
-static const Vec2 Vec2Zero = { 0.0f, 0.0f };
+static const Vec2 Vec2Zero = {0.0f, 0.0f};
 
 /**
  * A 2d vector containing only ones.
  */
-static const Vec2 Vec2One = { 1.0f, 1.0f };
+static const Vec2 Vec2One = {1.0f, 1.0f};
 
 /**
  * @brief Get the consecutive floating values from a Vec2.
  * @param vec reference of the vector.
  * @return The address of first component.
  */
-float *Vec2Floats(Vec2 *vec);
+float* Vec2Floats(Vec2* vec);
 
 /**
- * @brief Compare the components of two vectors and return if they are approx equal.
+ * @brief Compare the components of two vectors and return if they are approx
+ * equal.
  * @param a first vector.
  * @param b second vector.
  * @return true if a components are near b components.
@@ -69,8 +71,8 @@ Vec2 Vec2Scale(Vec2 v, float f);
 /**
  * @brief Squared length of a vector.
  *
- * Calculates the standard length of a vector without doing the square root saving
- * a little bit of resources.
+ * Calculates the standard length of a vector without doing the square root
+ * saving a little bit of resources.
  * @param v vector.
  * @return squared vector's length.
  */
