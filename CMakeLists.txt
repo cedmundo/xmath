@@ -23,8 +23,8 @@ include(cmake/FetchCMocka.cmake)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(M)
 
-set(HEADERS xmath.h scalar.h vec2.h vec3.h)
-set(SOURCES scalar.c vec2.c vec3.c)
+set(HEADERS xmath.h scalar.h vec2.h vec3.h vec4.h)
+set(SOURCES scalar.c vec2.c vec3.c vec4.c)
 
 if(BUILD_STATIC)
   add_library(xmath STATIC)
@@ -52,6 +52,7 @@ if(BUILD_TESTS)
   setup_test(scalar)
   setup_test(vec2)
   setup_test(vec3)
+  setup_test(vec4)
 endif()
 
 list(JOIN HEADERS ";" PUBLIC_HEADERS)
