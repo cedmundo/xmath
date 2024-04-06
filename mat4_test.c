@@ -234,6 +234,74 @@ static void test_Mat4LookAt(void** state) {
   assert_true(Mat4EqualApprox(r, expected));
 }
 
+static void test_Mat4Inverse(void** state) {
+  UNUSED(state);
+
+  Mat4 a = Mat4Identity;
+  Mat4 e = Mat4Identity;
+  Mat4 r = {0};
+
+  assert_true(Mat4Invert(&r, a));
+  assert_true(Mat4EqualApprox(r, e));
+
+  // clang-format off
+  a = (Mat4){
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    2.0f, 2.0f, 2.0f, 1.0f,
+  };
+  e = (Mat4){
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    -2.0f, -2.0f, -2.0f, 1.0f,
+  };
+  // clang-format on
+  r = (Mat4){0};
+
+  assert_true(Mat4Invert(&r, a));
+  assert_true(Mat4EqualApprox(r, e));
+
+  // clang-format off
+  a = (Mat4){
+    2.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 2.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 2.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  e = (Mat4){
+    0.5f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.5f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.5f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  // clang-format on
+  r = (Mat4){0};
+
+  assert_true(Mat4Invert(&r, a));
+  assert_true(Mat4EqualApprox(r, e));
+
+  // clang-format off
+  a = (Mat4){
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    -1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  e = (Mat4){
+    0.0f, 0.0f, -1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  // clang-format on
+  r = (Mat4){0};
+
+  assert_true(Mat4Invert(&r, a));
+  assert_true(Mat4EqualApprox(r, e));
+}
+
 int main() {
   UNUSED_TYPE(jmp_buf);
   UNUSED_TYPE(va_list);
@@ -250,6 +318,7 @@ int main() {
       cmocka_unit_test(test_Mat4MakeOrtho),
       cmocka_unit_test(test_Mat4MakePerspective),
       cmocka_unit_test(test_Mat4LookAt),
+      cmocka_unit_test(test_Mat4Inverse),
   };
   // clang-format on
 

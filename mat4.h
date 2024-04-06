@@ -79,6 +79,15 @@ Vec4 Mat4Col(Mat4 m, unsigned int i);
 Mat4 Mat4Transpose(Mat4 m);
 
 /**
+ * \brief Get the inverse of a matrix.
+ *
+ * \param Mat4 result (out).
+ * \param Mat4 m matrix to be inverted (not modified).
+ * \return true if the matrix can be inverted, false otherwise.
+ */
+bool Mat4Invert(Mat4* result, Mat4 m);
+
+/**
  * \brief Adds two matrices.
  * \param Mat4 a left operand.
  * \param Mat4 b right operand.

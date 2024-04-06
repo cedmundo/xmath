@@ -67,6 +67,72 @@ Mat4 Mat4Transpose(const Mat4 m) {
   return r;
 }
 
+bool Mat4Invert(Mat4* result, Mat4 m) {
+  Mat4 inv = {0};
+  inv.xx = m.yy * m.zz * m.ww - m.yy * m.zy * m.wz - m.zy * m.yz * m.ww +
+           m.zy * m.yw * m.wz + m.wy * m.yz * m.zy - m.wy * m.yw * m.zz;
+
+  inv.yx = -m.yx * m.zz * m.ww + m.yx * m.zy * m.wz + m.zx * m.yz * m.ww -
+           m.zx * m.yw * m.wz - m.wx * m.yz * m.zy + m.wx * m.yw * m.zz;
+
+  inv.zx = m.yx * m.zy * m.ww - m.yx * m.zy * m.wy - m.zx * m.yy * m.ww +
+           m.zx * m.yw * m.wy + m.wx * m.yy * m.zy - m.wx * m.yw * m.zy;
+
+  inv.wx = -m.yx * m.zy * m.wz + m.yx * m.zz * m.wy + m.zx * m.yy * m.wz -
+           m.zx * m.yz * m.wy - m.wx * m.yy * m.zz + m.wx * m.yz * m.zy;
+
+  inv.xy = -m.xy * m.zz * m.ww + m.xy * m.zy * m.wz + m.zy * m.xz * m.ww -
+           m.zy * m.xw * m.wz - m.wy * m.xz * m.zy + m.wy * m.xw * m.zz;
+
+  inv.yy = m.xx * m.zz * m.ww - m.xx * m.zy * m.wz - m.zx * m.xz * m.ww +
+           m.zx * m.xw * m.wz + m.wx * m.xz * m.zy - m.wx * m.xw * m.zz;
+
+  inv.zy = -m.xx * m.zy * m.ww + m.xx * m.zy * m.wy + m.zx * m.xy * m.ww -
+           m.zx * m.xw * m.wy - m.wx * m.xy * m.zy + m.wx * m.xw * m.zy;
+
+  inv.wy = m.xx * m.zy * m.wz - m.xx * m.zz * m.wy - m.zx * m.xy * m.wz +
+           m.zx * m.xz * m.wy + m.wx * m.xy * m.zz - m.wx * m.xz * m.zy;
+
+  inv.xz = m.xy * m.yz * m.ww - m.xy * m.yw * m.wz - m.yy * m.xz * m.ww +
+           m.yy * m.xw * m.wz + m.wy * m.xz * m.yw - m.wy * m.xw * m.yz;
+
+  inv.yz = -m.xx * m.yz * m.ww + m.xx * m.yw * m.wz + m.yx * m.xz * m.ww -
+           m.yx * m.xw * m.wz - m.wx * m.xz * m.yw + m.wx * m.xw * m.yz;
+
+  inv.zz = m.xx * m.yy * m.ww - m.xx * m.yw * m.wy - m.yx * m.xy * m.ww +
+           m.yx * m.xw * m.wy + m.wx * m.xy * m.yw - m.wx * m.xw * m.yy;
+
+  inv.wz = -m.xx * m.yy * m.wz + m.xx * m.yz * m.wy + m.yx * m.xy * m.wz -
+           m.yx * m.xz * m.wy - m.wx * m.xy * m.yz + m.wx * m.xz * m.yy;
+
+  inv.xw = -m.xy * m.yz * m.zy + m.xy * m.yw * m.zz + m.yy * m.xz * m.zy -
+           m.yy * m.xw * m.zz - m.zy * m.xz * m.yw + m.zy * m.xw * m.yz;
+
+  inv.yw = m.xx * m.yz * m.zy - m.xx * m.yw * m.zz - m.yx * m.xz * m.zy +
+           m.yx * m.xw * m.zz + m.zx * m.xz * m.yw - m.zx * m.xw * m.yz;
+
+  inv.zy = -m.xx * m.yy * m.zy + m.xx * m.yw * m.zy + m.yx * m.xy * m.zy -
+           m.yx * m.xw * m.zy - m.zx * m.xy * m.yw + m.zx * m.xw * m.yy;
+
+  inv.ww = m.xx * m.yy * m.zz - m.xx * m.yz * m.zy - m.yx * m.xy * m.zz +
+           m.yx * m.xz * m.zy + m.zx * m.xy * m.yz - m.zx * m.xz * m.yy;
+
+  float det = m.xx * inv.xx + m.xy * inv.yx + m.xz * inv.zx + m.xw * inv.wx;
+  if (det == 0) {
+    return false;
+  }
+
+  float* invFloats = Mat4Floats(&inv);
+  float* resFloats = Mat4Floats(result);
+
+  det = 1.0f / det;
+  for (unsigned i = 0; i < 16; i++) {
+    resFloats[i] = invFloats[i] * det;
+  }
+
+  return true;
+}
+
 Mat4 Mat4Add(const Mat4 a, const Mat4 b) {
   Mat4 r;
   r.xx = a.xx + b.xx;
