@@ -9,7 +9,7 @@
 /**
  * @brief Vector of four dimensions.
  *
- * Just three floats aligned by default, this structure should suffice for most
+ * Just four floats aligned by default, this structure should suffice for most
  * use cases, when contiguous memory usage is needed then `float *Vec4Floats()`
  * can be used.
  */

@@ -11,5 +11,6 @@
 #include "vec4.h"
 
 #include "mat4.h"
+#include "quat.h"
 
 #endif /* XMATH_H */
