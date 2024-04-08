@@ -1,8 +1,6 @@
-//
-// Created on 4/7/24.
-//
 #include <math.h>
 
+#include "mat4.h"
 #include "quat.h"
 #include "scalar.h"
 #include "vec3.h"
@@ -18,7 +16,7 @@ Quat QuatMakeAngleAxis(float angle, Vec3 axis) {
       .x = norm.x * s,
       .y = norm.y * s,
       .z = norm.z * s,
-      cosf(angle * 0.5f),
+      .w = cosf(angle * 0.5f),
   };
 }
 
@@ -48,11 +46,20 @@ Quat QuatMakeFromTo(Vec3 from, Vec3 to) {
 }
 
 Vec3 QuatGetAxis(Quat quat) {
-  return Vec3Norm((Vec3){quat.x, quat.y, quat.z});
+  Vec3 v = {quat.x, quat.y, quat.z};
+  return Vec3Norm(v);
 }
 
 float QuatGetAngle(Quat quat) {
   return 2.0f * acosf(quat.w);
+}
+
+Vec3 QuatGetImgPart(Quat q) {
+  return (Vec3){q.x, q.y, q.z};
+}
+
+float QuatGetRealPart(Quat q) {
+  return q.w;
 }
 
 bool QuatEqualApprox(Quat a, Quat b) {
@@ -76,6 +83,23 @@ Quat QuatNeg(Quat q) {
   return QuatScale(q, -1);
 }
 
+Quat QuatPow(Quat q, float p) {
+  Vec3 i = QuatGetImgPart(q);
+  float s = QuatGetRealPart(q);
+  float angle = 2.0f * acosf(s);
+  Vec3 axis = Vec3Norm(i);
+
+  float halfCos = cosf(p * angle * 0.5f);
+  float halfSin = cosf(p * angle * 0.5f);
+
+  return (Quat){
+      axis.x * halfSin,
+      axis.y * halfSin,
+      axis.z * halfSin,
+      halfCos,
+  };
+}
+
 bool QuatSameOrientation(Quat a, Quat b) {
   return (fabsf(a.x - b.x) <= XMATH_EPSILON &&
           fabsf(a.y - b.y) <= XMATH_EPSILON &&
@@ -89,4 +113,109 @@ bool QuatSameOrientation(Quat a, Quat b) {
 
 float QuatDot(Quat a, Quat b) {
   return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
+float QuatSqrLen(Quat v) {
+  return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
+}
+
+float QuatLen(Quat v) {
+  return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+}
+
+Quat QuatNorm(Quat v) {
+  float vl = QuatLen(v);
+  if (vl < XMATH_EPSILON) {
+    return v;
+  }
+
+  float k = 1.0f / vl;
+  return QuatScale(v, k);
+}
+
+Quat QuatConjugate(Quat q) {
+  return (Quat){-q.x, -q.y, -q.z, q.w};
+}
+
+Quat QuatInvert(Quat q) {
+  float lenSq = QuatSqrLen(q);
+  if (lenSq < XMATH_EPSILON) {
+    return QuatIdentity;
+  }
+
+  float recip = 1.0f / lenSq;
+  return (Quat){-q.x * recip, -q.y * recip, -q.z * recip, q.w * recip};
+}
+
+Quat QuatMul(Quat a, Quat b) {
+  return (Quat){
+      +b.x * a.w + b.y * a.z - b.z * a.y + b.w * a.x,
+      -b.x * a.z + b.y * a.w + b.z * a.x + b.w * a.y,
+      +b.x * a.y - b.y * a.x + b.z * a.w + b.w * a.z,
+      -b.x * a.x - b.y * a.y - b.z * a.z + b.w * a.w,
+  };
+}
+
+Vec3 QuatTransformVec3(Quat q, Vec3 v) {
+  float s = QuatGetRealPart(q);
+  Vec3 i = QuatGetImgPart(q);
+  Vec3 a = Vec3Scale(i, 2.0f * Vec3Dot(i, v));
+  Vec3 b = Vec3Scale(v, s * s - Vec3Dot(i, i));
+  Vec3 c = Vec3Scale(Vec3Cross(i, v), 2.0f * s);
+  return Vec3Add(Vec3Add(a, b), c);
+}
+
+Quat QuatMix(Quat from, Quat to, float t) {
+  return QuatAdd(QuatScale(from, 1.0f - t), QuatScale(to, t));
+}
+
+Quat QuatNLerp(Quat from, Quat to, float t) {
+  return QuatNorm(QuatMix(from, to, t));
+}
+
+Quat QuatSLerp(Quat from, Quat to, float t) {
+  if (fabsf(QuatDot(from, to)) > 1.0f - XMATH_EPSILON) {
+    return QuatNLerp(from, to, t);
+  }
+
+  Quat delta = QuatMul(QuatInvert(from), to);
+  return QuatNorm(QuatMul(QuatPow(delta, t), from));
+}
+
+Quat LookRotation(Vec3 dir, Vec3 up) {
+  Vec3 f = Vec3Norm(dir);
+  Vec3 u = Vec3Norm(up);
+  Vec3 r = Vec3Cross(u, f);
+  u = Vec3Cross(f, r);
+
+  Quat worldToObject = QuatMakeFromTo(Vec3Backward, f);
+  Vec3 objectUp = QuatTransformVec3(worldToObject, Vec3Up);
+  Quat objectUpToDesiredUp = QuatMakeFromTo(objectUp, u);
+  Quat result = QuatMul(worldToObject, objectUpToDesiredUp);
+  return QuatNorm(result);
+}
+
+Mat4 QuatToMat4(Quat q) {
+  Vec3 r = QuatTransformVec3(q, Vec3Right);
+  Vec3 u = QuatTransformVec3(q, Vec3Up);
+  Vec3 f = QuatTransformVec3(q, Vec3Backward);
+  // clang-format off
+  return (Mat4){
+    r.x, r.y, r.z, 0.0f,
+    u.x, u.y, u.z, 0.0f,
+    f.x, f.y, f.z, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f,
+  };
+  // clang-format on
+}
+
+Quat Mat4ToQuat(Mat4 m) {
+  Vec3 up = {m.yx, m.yy, m.yz};
+  Vec3 forward = {m.zx, m.zy, m.zz};
+
+  up = Vec3Norm(up);
+  forward = Vec3Norm(forward);
+  Vec3 right = Vec3Cross(up, forward);
+  up = Vec3Cross(forward, right);
+  return LookRotation(forward, up);
 }
