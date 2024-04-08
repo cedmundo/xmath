@@ -151,7 +151,7 @@ Mat4 Mat4MakeOrtho(float l, float r, float b, float t, float n, float f);
  * \param float f far
  * \return a prerspective projection matrix.
  */
-Mat4 Mat4MakePerspective(float yfov, float aspect, float n, float f);
+Mat4 Mat4MakePerspective(float fov, float aspect, float n, float f);
 
 /**
  * \brief Makes a new "looking at" matrix.

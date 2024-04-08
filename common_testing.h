@@ -5,7 +5,7 @@
 #ifndef XMATH_COMMON_TESTING_H
 #define XMATH_COMMON_TESTING_H
 
-#define UNUSED(x) ((void)x)
+#define UNUSED(x) ((void)(x))
 #define UNUSED_TYPE(x) ((void)(void*)(x*)0)
 
 #endif  // XMATH_COMMON_TESTING_H

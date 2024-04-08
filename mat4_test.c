@@ -8,9 +8,6 @@
 #include "common_testing.h"
 
 #include "mat4.h"
-#include "scalar.h"
-
-#include <math.h>
 
 static void test_Mat4Constants(void** state) {
   UNUSED(state);

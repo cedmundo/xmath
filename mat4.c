@@ -248,9 +248,9 @@ Mat4 Mat4MakeOrtho(float l, float r, float b, float t, float n, float f) {
   return m;
 }
 
-Mat4 Mat4MakePerspective(float yfov, float aspect, float n, float f) {
+Mat4 Mat4MakePerspective(float fov, float aspect, float n, float f) {
   Mat4 m = Mat4Zero;
-  float const e = 1.0f / tanf(FDeg2Rad(yfov) / 2.0f);
+  float const e = 1.0f / tanf(FDeg2Rad(fov) / 2.0f);
 
   m.xx = e / aspect;
   m.xy = 0.0f;
