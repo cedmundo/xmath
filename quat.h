@@ -218,7 +218,7 @@ Quat QuatSLerp(Quat from, Quat to, float t);
  * @param up world or relative up to use to align correctly the rotation.
  * @return the quaternion to look at dir.
  */
-Quat LookRotation(Vec3 dir, Vec3 up);
+Quat QuatLookRotation(Vec3 dir, Vec3 up);
 
 /**
  * @brief Convert a quaternion into a matrix representation.

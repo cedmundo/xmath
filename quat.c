@@ -1,4 +1,6 @@
+#include <assert.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "mat4.h"
 #include "quat.h"
@@ -161,7 +163,7 @@ Quat QuatSLerp(Quat from, Quat to, float t) {
   float d = QuatDot(from, to);
 
   // if theta < 0 the interpolation will take the long way around the sphere
-  if (d < 0) {
+  if (d < 0.0f) {
     target = QuatNeg(to);
     d = -d;
   }
@@ -172,23 +174,27 @@ Quat QuatSLerp(Quat from, Quat to, float t) {
   }
 
   float theta = acosf(d);
-  Quat a = QuatScale(target, sinf((1.0f - t) * theta));
-  Quat b = QuatScale(from, sinf(t * theta));
+  Quat a = QuatScale(from, sinf((1.0f - t) * theta));
+  Quat b = QuatScale(target, sinf(t * theta));
   Quat c = QuatAdd(a, b);
   return QuatScale(c, 1.0f / sinf(theta));
 }
 
-Quat LookRotation(Vec3 dir, Vec3 up) {
-  Vec3 f = Vec3Norm(dir);
-  Vec3 u = Vec3Norm(up);
-  Vec3 r = Vec3Cross(u, f);
-  u = Vec3Cross(f, r);
+Quat QuatLookRotation(Vec3 dir, Vec3 up) {
+  Vec3 d = Vec3Scale(dir, -1);
+  Vec3 r = Vec3Cross(up, d);
+  Vec3 a = Vec3Scale(r, 1.0f / sqrtf(FMax(0.00001f, Vec3Dot(r, r))));
+  Vec3 b = Vec3Cross(d, a);
 
-  Quat worldToObject = QuatMakeFromTo(Vec3Backward, f);
-  Vec3 objectUp = QuatTransformVec3(worldToObject, Vec3Up);
-  Quat objectUpToDesiredUp = QuatMakeFromTo(objectUp, u);
-  Quat result = QuatCross(worldToObject, objectUpToDesiredUp);
-  return QuatNorm(result);
+  // clang-format off
+  Mat4 m = {
+     a.x,  a.y,  a.z, 0.0f,
+     b.x,  b.y,  b.z, 0.0f,
+     d.x,  d.y,  d.z, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+  };
+  // clang-format on
+  return Mat4ToQuat(m);
 }
 
 Mat4 QuatToMat4(Quat q) {
@@ -197,21 +203,70 @@ Mat4 QuatToMat4(Quat q) {
   Vec3 f = QuatTransformVec3(q, Vec3Backward);
   // clang-format off
   return (Mat4){
-    r.x, r.y, r.z, 0.0f,
-    u.x, u.y, u.z, 0.0f,
-    f.x, f.y, f.z, 0.0f,
+     r.x,  r.y,  r.z, 0.0f,
+     u.x,  u.y,  u.z, 0.0f,
+     f.x,  f.y,  f.z, 0.0f,
     0.0f, 0.0f, 0.0f, 1.0f,
   };
   // clang-format on
 }
 
 Quat Mat4ToQuat(Mat4 m) {
-  Vec3 up = {m.yx, m.yy, m.yz};
-  Vec3 forward = {m.zx, m.zy, m.zz};
+  float fx = m.xx - m.yy - m.zz;
+  float fy = m.yy - m.xx - m.zz;
+  float fz = m.zz - m.xx - m.yy;
+  float fw = m.xx + m.yy + m.zz;
 
-  up = Vec3Norm(up);
-  forward = Vec3Norm(forward);
-  Vec3 right = Vec3Cross(up, forward);
-  up = Vec3Cross(forward, right);
-  return LookRotation(forward, up);
+  unsigned bi = 0;
+  float fb = fw;
+  if (fx > fb) {
+    fb = fx;
+    bi = 1;
+  }
+
+  if (fy > fb) {
+    fb = fy;
+    bi = 2;
+  }
+
+  if (fz > fb) {
+    fb = fz;
+    bi = 3;
+  }
+
+  float bv = sqrtf(fb + 1.0f) * 0.5f;
+  float fm = 0.25f / bv;
+  switch (bi) {
+    case 0:
+      return (Quat){
+          (m.yz - m.zy) * fm,
+          (m.zx - m.xz) * fm,
+          (m.xy - m.yx) * fm,
+          bv,
+      };
+    case 1:
+      return (Quat){
+          bv,
+          (m.xy + m.yx) * fm,
+          (m.zx + m.xz) * fm,
+          (m.yz - m.zy) * fm,
+      };
+    case 2:
+      return (Quat){
+          (m.xy + m.yx) * fm,
+          bv,
+          (m.yz + m.zy) * fm,
+          (m.zx - m.xz) * fm,
+      };
+    case 3:
+      return (Quat){
+          (m.zx + m.xz) * fm,
+          (m.yz + m.zy) * fm,
+          bv,
+          (m.xy - m.yx) * fm,
+      };
+    default:
+      assert(false && "unreachable code: undefined biggest index");
+      return QuatIdentity;
+  }
 }

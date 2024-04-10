@@ -76,7 +76,7 @@ static void test_QuatAdd(void** state) {
 
   Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
   Quat b = {0.30f, 0.55f, 0.30f, 0.56f};
-  Quat e = { 0.53f, 0.86f, 1.09f, 1.03f};
+  Quat e = {0.53f, 0.86f, 1.09f, 1.03f};
   Quat r = QuatAdd(a, b);
   assert_true(QuatEqualApprox(r, e));
 }
@@ -86,7 +86,7 @@ static void test_QuatSub(void** state) {
 
   Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
   Quat b = {0.30f, 0.55f, 0.30f, 0.56f};
-  Quat e = { -0.070f, -0.240f, 0.490f, -0.090f};
+  Quat e = {-0.070f, -0.240f, 0.490f, -0.090f};
   Quat r = QuatSub(a, b);
   assert_true(QuatEqualApprox(r, e));
 }
@@ -111,9 +111,6 @@ static void test_QuatNeg(void** state) {
 
 static void test_QuatSameOrientation(void** state) {
   UNUSED(state);
-
-  Quat a = {};
-  Quat b = {};
 }
 
 static void test_QuatDot(void** state) {
@@ -147,8 +144,8 @@ static void test_QuatLen(void** state) {
 static void test_QuatNorm(void** state) {
   UNUSED(state);
 
-  Quat a = {0.210f,0.760f,0.290f,0.330f};
-  Quat e = {0.232659295f,0.842005074f,0.321291417f,0.3656075f};
+  Quat a = {0.210f, 0.760f, 0.290f, 0.330f};
+  Quat e = {0.232659295f, 0.842005074f, 0.321291417f, 0.3656075f};
   Quat r = QuatNorm(a);
   assert_true(QuatEqualApprox(e, r));
 }
@@ -156,8 +153,8 @@ static void test_QuatNorm(void** state) {
 static void test_QuatConjugate(void** state) {
   UNUSED(state);
 
-  Quat a = {0.210f,0.760f,0.290f,0.330f};
-  Quat e = {-0.210f,-0.760f,-0.290f,0.330f};
+  Quat a = {0.210f, 0.760f, 0.290f, 0.330f};
+  Quat e = {-0.210f, -0.760f, -0.290f, 0.330f};
   Quat r = QuatConjugate(a);
   assert_true(QuatEqualApprox(e, r));
 }
@@ -165,8 +162,8 @@ static void test_QuatConjugate(void** state) {
 static void test_QuatInvert(void** state) {
   UNUSED(state);
 
-  Quat a = {0.210f,0.760f,0.290f,0.330f};
-  Quat e = {-0.257763594f,-0.932858765f,-0.355959237f,0.405057102f};
+  Quat a = {0.210f, 0.760f, 0.290f, 0.330f};
+  Quat e = {-0.257763594f, -0.932858765f, -0.355959237f, 0.405057102f};
   Quat r = QuatInvert(a);
   assert_true(QuatEqualApprox(e, r));
 }
@@ -176,7 +173,7 @@ static void test_QuatCross(void** state) {
 
   Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
   Quat b = {0.55f, 0.30f, 0.56f, 0.56f};
-  Quat e = {0.323900014f,0.620299935f,0.604099989f,-0.398699999f};
+  Quat e = {0.3239f, 0.6203f, 0.6041f, -0.3987f};
   Quat r = QuatCross(a, b);
   assert_true(QuatEqualApprox(r, e));
 }
@@ -186,33 +183,84 @@ static void test_QuatTransformVec3(void** state) {
 
   Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
   Vec3 b = {0.3f, 0.3f, 0.3f};
-  Vec3 e = {-0.11748001f,0.239640027f,0.442200005f};
+  Vec3 e = {-0.11748001f, 0.239640027f, 0.442200005f};
   Vec3 r = QuatTransformVec3(a, b);
   assert_true(Vec3EqualApprox(r, e));
 }
 
 static void test_QuatLerp(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.55f, 0.30f, 0.56f, 0.56f};
+  Quat e = {0.390000015f, 0.305000007f, 0.675000012f, 0.514999986f};
+  float c = 0.5f;
+  Quat r = QuatLerp(a, b, c);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatNLerp(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.55f, 0.30f, 0.56f, 0.56f};
+  Quat e = {0.396809f, 0.310325f, 0.686785f, 0.523992f};
+  float c = 0.5f;
+  Quat r = QuatNLerp(a, b, c);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatSLerp(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.55f, 0.30f, 0.56f, 0.56f};
+  Quat e = {0.0537898f, 0.297403f, 0.862126f, 0.397308f};
+  float c = -0.5f;
+  Quat r = QuatSLerp(a, b, c);
+  assert_true(QuatEqualApprox(r, e));
 }
 
-static void test_LookRotation(void** state) {
+static void test_QuatLookRotation(void** state) {
   UNUSED(state);
+
+  Vec3 a = {1.0f, 1.0f, 1.0f};
+  Vec3 b = {0.0f, 1.0f, 0.0f};
+  Quat e = {-0.174155354f, 1.01505172f, -0.420448244f, -0.420448244f};
+  Quat r = QuatLookRotation(a, b);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatToMat4(void** state) {
   UNUSED(state);
+
+  Quat q = {0.23f, 0.31f, 0.79f, 0.47f};
+  Mat4 r = QuatToMat4(q);
+  // clang-format off
+  Mat4 e = {
+    -0.446400017f,  0.885200024f, 0.0719999969f, 0.000f,
+    -0.600000024f, -0.360000014f, 0.70600003f,   0.000f,
+     0.654800057f,  0.273599982f, 0.69600004f,   0.000f,
+     0.000f,  0.000f, 0.000f, 1.000f,
+  };
+  // clang-format on
+  assert_true(Mat4EqualApprox(r, e));
 }
 
 static void test_Mat4ToQuat(void** state) {
   UNUSED(state);
+
+  // clang-format off
+  Mat4 m = {
+    -0.446400017f,  0.885200024f, 0.0719999969f, 0.000f,
+    -0.600000024f, -0.360000014f, 0.70600003f,   0.000f,
+     0.654800057f,  0.273599982f, 0.69600004f,   0.000f,
+     0.000f,  0.000f, 0.000f, 1.000f,
+  };
+  // clang-format on
+  Quat e = {0.229724109f, 0.309628129f, 0.790948808f, 0.469436198f};
+  Quat r = Mat4ToQuat(m);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 int main() {
@@ -242,7 +290,7 @@ int main() {
       cmocka_unit_test(test_QuatLerp),
       cmocka_unit_test(test_QuatNLerp),
       cmocka_unit_test(test_QuatSLerp),
-      cmocka_unit_test(test_LookRotation),
+      cmocka_unit_test(test_QuatLookRotation),
       cmocka_unit_test(test_QuatToMat4),
       cmocka_unit_test(test_Mat4ToQuat),
   };
