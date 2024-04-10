@@ -42,6 +42,10 @@ Vec3 Vec3Norm(Vec3 v) {
   return Vec3Scale(v, k);
 }
 
+Vec3 Vec3Orthonormalize(Vec3 a, Vec3 b) {
+  return Vec3Norm(Vec3Sub(a, Vec3Scale(b, Vec3Dot(b, a))));
+}
+
 Vec3 Vec3Max(Vec3 a, Vec3 b) {
   Vec3 r = {0};
   r.x = FMax(a.x, b.x);

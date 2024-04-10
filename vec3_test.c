@@ -157,6 +157,21 @@ static void test_Vec3Norm(void** state) {
   assert_true(Vec3EqualApprox(e, r));
 }
 
+static void test_Vec3Orthonormalize(void** state) {
+  UNUSED(state);
+
+  Vec3 a;
+  Vec3 b;
+  Vec3 e;
+  Vec3 r;
+
+  a = (Vec3){5.0f, -1.0f, 3.0f};
+  b = (Vec3){2.0f, 3.0f, 4.0f};
+  e = (Vec3){-0.333657f, -0.586427f, -0.73809f};
+  r = Vec3Orthonormalize(a, b);
+  assert_true(Vec3EqualApprox(e, r));
+}
+
 static void test_Vec3Max(void** state) {
   UNUSED(state);
 
@@ -415,6 +430,7 @@ int main() {
       cmocka_unit_test(test_Vec3SqrLen),
       cmocka_unit_test(test_Vec3Len),
       cmocka_unit_test(test_Vec3Norm),
+      cmocka_unit_test(test_Vec3Orthonormalize),
       cmocka_unit_test(test_Vec3Max),
       cmocka_unit_test(test_Vec3Min),
       cmocka_unit_test(test_Vec3Angle),

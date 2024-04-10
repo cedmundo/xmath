@@ -108,6 +108,14 @@ float Vec3Len(Vec3 v);
 Vec3 Vec3Norm(Vec3 v);
 
 /**
+ * @brief Orthonormalization of a vector.
+ * @param a vector (unaffected).
+ * @param b vector (unaffected).
+ * @return orthonormalization between a and b.
+ */
+Vec3 Vec3Orthonormalize(Vec3 a, Vec3 b);
+
+/**
  * @brief Return the greater value of each component of two vectors.
  *
  * This function will return a new vector containing the greater values of each
