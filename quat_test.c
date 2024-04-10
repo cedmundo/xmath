@@ -37,86 +37,161 @@ static void test_QuatMakeAngleAxis(void** state) {
   float angle = FDeg2Rad(90.0f);
   Quat q = QuatMakeAngleAxis(angle, axis);
   Quat e = {0.707106709f, 0.0f, 0.0f, 0.707106709f};
-  assert_true(QuatSameOrientation(q, e));
+  assert_true(QuatEqualApprox(q, e));
 }
 
 static void test_QuatMakeFromTo(void** state) {
   UNUSED(state);
+
+  Vec3 from = Vec3Norm(Vec3Down);
+  Vec3 to = Vec3Norm(Vec3Forward);
+  Quat q = QuatMakeFromTo(from, to);
+  Quat e = {0.707106709f, 0.0f, 0.0f, 0.707106709f};
+  assert_true(QuatEqualApprox(q, e));
 }
 
-static void test_QuatGetAxis(void** state) {
+static void test_QuatGet(void** state) {
   UNUSED(state);
-}
 
-static void test_QuatGetAngle(void** state) {
-  UNUSED(state);
-}
+  Quat q = {0.23f, 0.28f, 0.31f, 0.88f};
+  Vec3 qAxis = QuatGetAxis(q);
+  Vec3 eAxis = {0.48231706f, 0.587168574f, 0.650079489f};
+  assert_true(Vec3EqualApprox(qAxis, eAxis));
 
-static void test_QuatGetImgPart(void** state) {
-  UNUSED(state);
-}
+  float qAngle = QuatGetAngle(q);
+  float eAngle = 0.989868253f;
+  assert_true(FEqualApprox(qAngle, eAngle));
 
-static void test_QuatGetRealPart(void** state) {
-  UNUSED(state);
+  Vec3 qImg = QuatGetImgPart(q);
+  Vec3 eImg = {0.23f, 0.28f, 0.31f};
+  assert_true(Vec3EqualApprox(qImg, eImg));
+
+  float qReal = QuatGetRealPart(q);
+  float eReal = 0.88f;
+  assert_true(FEqualApprox(qReal, eReal));
 }
 
 static void test_QuatAdd(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.30f, 0.55f, 0.30f, 0.56f};
+  Quat e = { 0.53f, 0.86f, 1.09f, 1.03f};
+  Quat r = QuatAdd(a, b);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatSub(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.30f, 0.55f, 0.30f, 0.56f};
+  Quat e = { -0.070f, -0.240f, 0.490f, -0.090f};
+  Quat r = QuatSub(a, b);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatScale(void** state) {
   UNUSED(state);
+
+  Quat q = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat e = {0.460f, 0.620f, 1.580f, 0.940f};
+  Quat r = QuatScale(q, 2.0f);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatNeg(void** state) {
   UNUSED(state);
-}
 
-static void test_QuatPow(void** state) {
-  UNUSED(state);
+  Quat q = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat e = {-0.23f, -0.31f, -0.79f, -0.47f};
+  Quat r = QuatNeg(q);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatSameOrientation(void** state) {
   UNUSED(state);
+
+  Quat a = {};
+  Quat b = {};
 }
 
 static void test_QuatDot(void** state) {
   UNUSED(state);
+
+  Quat a = {0.79f, 0.47f, 0.23f, 0.31f};
+  Quat b = {0.30f, 0.56f, 0.30f, 0.55f};
+  float e = 0.7397f;
+  float r = QuatDot(a, b);
+  assert_true(FEqualApprox(e, r));
 }
 
 static void test_QuatSqrLen(void** state) {
   UNUSED(state);
+
+  Quat a = {0.21f, 0.76f, 0.29f, 0.33f};
+  float e = 0.8147f;
+  float r = QuatSqrLen(a);
+  assert_true(FEqualApprox(e, r));
 }
 
 static void test_QuatLen(void** state) {
   UNUSED(state);
+
+  Quat a = {0.21f, 0.76f, 0.29f, 0.33f};
+  float e = 0.902607f;
+  float r = QuatLen(a);
+  assert_true(FEqualApprox(e, r));
 }
 
 static void test_QuatNorm(void** state) {
   UNUSED(state);
+
+  Quat a = {0.210f,0.760f,0.290f,0.330f};
+  Quat e = {0.232659295f,0.842005074f,0.321291417f,0.3656075f};
+  Quat r = QuatNorm(a);
+  assert_true(QuatEqualApprox(e, r));
 }
 
 static void test_QuatConjugate(void** state) {
   UNUSED(state);
+
+  Quat a = {0.210f,0.760f,0.290f,0.330f};
+  Quat e = {-0.210f,-0.760f,-0.290f,0.330f};
+  Quat r = QuatConjugate(a);
+  assert_true(QuatEqualApprox(e, r));
 }
 
 static void test_QuatInvert(void** state) {
   UNUSED(state);
+
+  Quat a = {0.210f,0.760f,0.290f,0.330f};
+  Quat e = {-0.257763594f,-0.932858765f,-0.355959237f,0.405057102f};
+  Quat r = QuatInvert(a);
+  assert_true(QuatEqualApprox(e, r));
 }
 
-static void test_QuatMul(void** state) {
+static void test_QuatCross(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat b = {0.55f, 0.30f, 0.56f, 0.56f};
+  Quat e = {0.323900014f,0.620299935f,0.604099989f,-0.398699999f};
+  Quat r = QuatCross(a, b);
+  assert_true(QuatEqualApprox(r, e));
 }
 
 static void test_QuatTransformVec3(void** state) {
   UNUSED(state);
+
+  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Vec3 b = {0.3f, 0.3f, 0.3f};
+  Vec3 e = {-0.11748001f,0.239640027f,0.442200005f};
+  Vec3 r = QuatTransformVec3(a, b);
+  assert_true(Vec3EqualApprox(r, e));
 }
 
-static void test_QuatMix(void** state) {
+static void test_QuatLerp(void** state) {
   UNUSED(state);
 }
 
@@ -150,15 +225,11 @@ int main() {
       cmocka_unit_test(test_QuatFloats),
       cmocka_unit_test(test_QuatMakeAngleAxis),
       cmocka_unit_test(test_QuatMakeFromTo),
-      cmocka_unit_test(test_QuatGetAxis),
-      cmocka_unit_test(test_QuatGetAngle),
-      cmocka_unit_test(test_QuatGetImgPart),
-      cmocka_unit_test(test_QuatGetRealPart),
+      cmocka_unit_test(test_QuatGet),
       cmocka_unit_test(test_QuatAdd),
       cmocka_unit_test(test_QuatSub),
       cmocka_unit_test(test_QuatScale),
       cmocka_unit_test(test_QuatNeg),
-      cmocka_unit_test(test_QuatPow),
       cmocka_unit_test(test_QuatSameOrientation),
       cmocka_unit_test(test_QuatDot),
       cmocka_unit_test(test_QuatSqrLen),
@@ -166,9 +237,9 @@ int main() {
       cmocka_unit_test(test_QuatNorm),
       cmocka_unit_test(test_QuatConjugate),
       cmocka_unit_test(test_QuatInvert),
-      cmocka_unit_test(test_QuatMul),
+      cmocka_unit_test(test_QuatCross),
       cmocka_unit_test(test_QuatTransformVec3),
-      cmocka_unit_test(test_QuatMix),
+      cmocka_unit_test(test_QuatLerp),
       cmocka_unit_test(test_QuatNLerp),
       cmocka_unit_test(test_QuatSLerp),
       cmocka_unit_test(test_LookRotation),

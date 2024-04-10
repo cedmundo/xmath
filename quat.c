@@ -83,23 +83,6 @@ Quat QuatNeg(Quat q) {
   return QuatScale(q, -1);
 }
 
-Quat QuatPow(Quat q, float p) {
-  Vec3 i = QuatGetImgPart(q);
-  float s = QuatGetRealPart(q);
-  float angle = 2.0f * acosf(s);
-  Vec3 axis = Vec3Norm(i);
-
-  float halfCos = cosf(p * angle * 0.5f);
-  float halfSin = cosf(p * angle * 0.5f);
-
-  return (Quat){
-      axis.x * halfSin,
-      axis.y * halfSin,
-      axis.z * halfSin,
-      halfCos,
-  };
-}
-
 bool QuatSameOrientation(Quat a, Quat b) {
   return (fabsf(a.x - b.x) <= XMATH_EPSILON &&
           fabsf(a.y - b.y) <= XMATH_EPSILON &&
@@ -147,12 +130,12 @@ Quat QuatInvert(Quat q) {
   return (Quat){-q.x * recip, -q.y * recip, -q.z * recip, q.w * recip};
 }
 
-Quat QuatMul(Quat a, Quat b) {
+Quat QuatCross(Quat a, Quat b) {
   return (Quat){
-      +b.x * a.w + b.y * a.z - b.z * a.y + b.w * a.x,
-      -b.x * a.z + b.y * a.w + b.z * a.x + b.w * a.y,
-      +b.x * a.y - b.y * a.x + b.z * a.w + b.w * a.z,
-      -b.x * a.x - b.y * a.y - b.z * a.z + b.w * a.w,
+      a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
+      a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z,
+      a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x,
+      a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,
   };
 }
 
@@ -165,21 +148,34 @@ Vec3 QuatTransformVec3(Quat q, Vec3 v) {
   return Vec3Add(Vec3Add(a, b), c);
 }
 
-Quat QuatMix(Quat from, Quat to, float t) {
+Quat QuatLerp(Quat from, Quat to, float t) {
   return QuatAdd(QuatScale(from, 1.0f - t), QuatScale(to, t));
 }
 
 Quat QuatNLerp(Quat from, Quat to, float t) {
-  return QuatNorm(QuatMix(from, to, t));
+  return QuatNorm(QuatLerp(from, to, t));
 }
 
 Quat QuatSLerp(Quat from, Quat to, float t) {
-  if (fabsf(QuatDot(from, to)) > 1.0f - XMATH_EPSILON) {
-    return QuatNLerp(from, to, t);
+  Quat target = to;
+  float d = QuatDot(from, to);
+
+  // if theta < 0 the interpolation will take the long way around the sphere
+  if (d < 0) {
+    target = QuatNeg(to);
+    d = -d;
   }
 
-  Quat delta = QuatMul(QuatInvert(from), to);
-  return QuatNorm(QuatMul(QuatPow(delta, t), from));
+  // Perform linear interpolation when cosTheta is close to 1
+  if (d > 1.0f - XMATH_EPSILON) {
+    return QuatLerp(from, target, t);
+  }
+
+  float theta = acosf(d);
+  Quat a = QuatScale(target, sinf((1.0f - t) * theta));
+  Quat b = QuatScale(from, sinf(t * theta));
+  Quat c = QuatAdd(a, b);
+  return QuatScale(c, 1.0f / sinf(theta));
 }
 
 Quat LookRotation(Vec3 dir, Vec3 up) {
@@ -191,7 +187,7 @@ Quat LookRotation(Vec3 dir, Vec3 up) {
   Quat worldToObject = QuatMakeFromTo(Vec3Backward, f);
   Vec3 objectUp = QuatTransformVec3(worldToObject, Vec3Up);
   Quat objectUpToDesiredUp = QuatMakeFromTo(objectUp, u);
-  Quat result = QuatMul(worldToObject, objectUpToDesiredUp);
+  Quat result = QuatCross(worldToObject, objectUpToDesiredUp);
   return QuatNorm(result);
 }
 

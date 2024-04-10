@@ -117,14 +117,6 @@ Quat QuatScale(Quat q, float s);
 Quat QuatNeg(Quat q);
 
 /**
- * @brief Power quaternion q to p.
- * @param q any quaternion (unaffected).
- * @param p any power.
- * @return Q angle adjusted to p.
- */
-Quat QuatPow(Quat q, float p);
-
-/**
  * @brief Check if two quaternions have the same orientation.
  * @param a first quaternion.
  * @param b second quaternion.
@@ -184,7 +176,7 @@ Quat QuatInvert(Quat q);
  * @param b any quaternion (unaffected).
  * @return product of a by b.
  */
-Quat QuatMul(Quat a, Quat b);
+Quat QuatCross(Quat a, Quat b);
 
 /**
  * @brief Transform a Vec3 using a quaternion.
@@ -202,7 +194,7 @@ Vec3 QuatTransformVec3(Quat q, Vec3 v);
  * @param to quaternion.
  * @param t transition value.
  */
-Quat QuatMix(Quat from, Quat to, float t);
+Quat QuatLerp(Quat from, Quat to, float t);
 
 /**
  * @brief Normalized linear interpolation between two quaternions.
