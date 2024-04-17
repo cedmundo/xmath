@@ -4,6 +4,7 @@
  */
 #ifndef XMATH_TRANSFORM_H
 #define XMATH_TRANSFORM_H
+#include <stdbool.h>
 #include "mat4.h"
 #include "quat.h"
 #include "vec3.h"
@@ -13,6 +14,14 @@ typedef struct {
   Quat rotation;
   Vec3 scale;
 } Transform;
+
+/**
+ * @brief Compare two transforms.
+ * @param a first transform.
+ * @param b second transform.
+ * @return true if they are approximately equal.
+ */
+bool TransformEqualApprox(Transform a, Transform b);
 
 /**
  * @brief Combine two transform in right-to-left order.

@@ -2,6 +2,12 @@
 #include <math.h>
 #include "scalar.h"
 
+bool TransformEqualApprox(Transform a, Transform b) {
+  return Vec3EqualApprox(a.position, b.position) &&
+         QuatEqualApprox(a.rotation, b.rotation) &&
+         Vec3EqualApprox(a.scale, b.scale);
+}
+
 Transform TransformCombine(Transform a, Transform b) {
   Transform r = {0};
 
