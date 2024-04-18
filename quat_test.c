@@ -210,7 +210,7 @@ static void test_QuatTransformVec3(void** state) {
   a = (Quat){-0.033477f, 0.044637f, 0.066955f, 0.996195f};
   b = (Vec3){0.0f, 0.0f, 1.0f};
   e = (Vec3){0.084451f, 0.072677f, 0.993774f};
-  r = (Vec3)QuatTransformVec3(a, b);
+  r = QuatTransformVec3(a, b);
   assert_true(Vec3EqualApprox(r, e));
 }
 
