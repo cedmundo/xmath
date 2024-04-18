@@ -20,6 +20,10 @@ Vec3 Vec3Sub(Vec3 a, Vec3 b) {
   return (Vec3){a.x - b.x, a.y - b.y, a.z - b.z};
 }
 
+Vec3 Vec3InnerMul(Vec3 a, Vec3 b) {
+  return (Vec3) {a.x * b.x, a.y * b.y, a.z * b.z};
+}
+
 Vec3 Vec3Scale(Vec3 v, float s) {
   return (Vec3){v.x * s, v.y * s, v.z * s};
 }

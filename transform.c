@@ -27,7 +27,7 @@ Transform TransformInverse(Transform t) {
   r.scale.z = fabsf(t.scale.z) < XMATH_EPSILON ? 0.0f : 1.0f / t.scale.z;
 
   Vec3 it = Vec3Scale(t.position, -1.0f);
-  r.position = QuatTransformVec3(r.rotation, Vec3Cross(r.scale, it));
+  r.position = QuatTransformVec3(r.rotation, Vec3InnerMul(r.scale, it));
   return r;
 }
 
@@ -48,7 +48,7 @@ Mat4 TransformToMat4(Transform t) {
   // Extract the rotation basis of the transform
   Vec3 x = QuatTransformVec3(t.rotation, Vec3Right);
   Vec3 y = QuatTransformVec3(t.rotation, Vec3Up);
-  Vec3 z = QuatTransformVec3(t.rotation, Vec3Backward);
+  Vec3 z = QuatTransformVec3(t.rotation, Vec3Back);
 
   // Scale the basis vectors
   x = Vec3Scale(x, t.scale.x);
@@ -71,39 +71,25 @@ Mat4 TransformToMat4(Transform t) {
 
 Transform Mat4ToTransform(Mat4 m) {
   Transform r = {0};
-
+  Vec3 forward = {-m.zx, -m.zy, -m.zz};
+  Vec3 upwards = {m.yx, m.yy, m.yz};
+  r.rotation = QuatLookRotation(forward, upwards);
   r.position = (Vec3){m.wx, m.wy, m.wz};
-  r.rotation = Mat4ToQuat(m);
-
-  // clang-format off
-  Mat4 rotScaleMat = {
-    m.xx, m.xy, m.xz, 0.0f,
-    m.yx, m.yy, m.yz, 0.0f,
-    m.zx, m.zy, m.zz, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f,
-  };
-  // clang-format on
-  Mat4 invRotMat = QuatToMat4(QuatInvert(r.rotation));
-  Mat4 scaleSkewMat = Mat4Mul(rotScaleMat, invRotMat);
-
   r.scale = (Vec3){
-      scaleSkewMat.xx,
-      scaleSkewMat.yy,
-      scaleSkewMat.zz,
+      .x = Vec4Len((Vec4){m.xx, m.xy, m.xz, m.xw}),
+      .y = Vec4Len((Vec4){m.yx, m.yy, m.yz, m.yw}),
+      .z = Vec4Len((Vec4){m.zx, m.zy, m.zz, m.yz}),
   };
-
   return r;
 }
 
 Vec3 TransformPoint(Transform a, Vec3 b) {
-  Vec3 r = {0};
-  r = QuatTransformVec3(a.rotation, Vec3Cross(a.scale, b));
+  Vec3 r = QuatTransformVec3(a.rotation, Vec3InnerMul(a.scale, b));
   r = Vec3Add(a.position, r);
   return r;
 }
 
 Vec3 TransformVec3(Transform a, Vec3 b) {
-  Vec3 r = {0};
-  r = QuatTransformVec3(a.rotation, Vec3Cross(a.scale, b));
+  Vec3 r = QuatTransformVec3(a.rotation, Vec3InnerMul(a.scale, b));
   return r;
 }

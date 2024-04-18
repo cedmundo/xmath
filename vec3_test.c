@@ -76,6 +76,21 @@ static void test_Vec3Sub(void** state) {
   assert_true(Vec3EqualApprox(e, r));
 }
 
+static void test_Vec3InnerMul(void** state) {
+  UNUSED(state);
+
+  Vec3 a;
+  Vec3 b;
+  Vec3 e;
+  Vec3 r;
+
+  a = (Vec3){1.0f, 2.0f, 3.0f};
+  b = (Vec3){3.0f, 2.0f, 1.0f};
+  e = (Vec3){3.0f, 4.0f, 3.0f};
+  r = Vec3InnerMul(a, b);
+  assert_true(Vec3EqualApprox(e, r));
+}
+
 static void test_Vec3Scale(void** state) {
   UNUSED(state);
 
@@ -426,6 +441,7 @@ int main() {
       cmocka_unit_test(test_Vec3Floats),
       cmocka_unit_test(test_Vec3Add),
       cmocka_unit_test(test_Vec3Sub),
+      cmocka_unit_test(test_Vec3InnerMul),
       cmocka_unit_test(test_Vec3Scale),
       cmocka_unit_test(test_Vec3SqrLen),
       cmocka_unit_test(test_Vec3Len),

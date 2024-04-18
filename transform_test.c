@@ -38,16 +38,15 @@ void test_TransformCombine(void** state) {
 void test_TransformInverse(void** state) {
   UNUSED(state);
 
-  // TODO(cedmundo): Verify with godot the results
   Transform a = {
       .position = {2.0f, 1.0f, 2.0f},
-      .rotation = {0.21f, 0.76f, 0.29f, 0.33f},
+      .rotation = QuatMakeAngleAxis(FDeg2Rad(25.0f), Vec3Up),
       .scale = {2.0f, 2.0f, 2.0f},
   };
 
   Transform e = {
-      .position = {0.0971018076f, 0.340195447f, -0.792559028f},
-      .rotation = {-0.257764f, -0.932859f, -0.355959f, 0.405057f},
+      .position = {-0.48369f, -0.5f, -1.328926f},
+      .rotation = {0.0f, -0.21644f, 0.0f, 0.976296f},
       .scale = {0.5f, 0.5f, 0.5f},
   };
 
@@ -105,14 +104,50 @@ void test_TransformToMat4(void** state) {
 
 void test_Mat4ToTransform(void** state) {
   UNUSED(state);
+
+  // clang-format off
+  Mat4 m = {
+      0.390731f, 0.0f, -0.920505f, 0.0f,
+      0.0f, 1.0f, 0.0f, 0.0f,
+      0.920505f, 0.0f, 0.390731f, 0.0f,
+      -1.0f, 3.0f, 4.0f, 1.0f,
+  };
+  // clang-format on
+
+  Transform e = {
+      .position = {-1.0f, 3.0f, 4.0f},
+      .rotation = {0, 0.551937f, 0, 0.833886f},
+      .scale = {1.0f, 1.0f, 1.0f}, // FIXME: Find out why scale is off
+  };
+  Transform r = Mat4ToTransform(m);
+  assert_true(TransformEqualApprox(r, e));
 }
 
 void test_TransformPoint(void** state) {
   UNUSED(state);
+
+  Transform a = {
+      .position = {1.0f, 0.0f, 0.0f},
+      .rotation = QuatMakeAngleAxis(FDeg2Rad(45.0f), Vec3Up),
+      .scale = Vec3One,
+  };
+  Vec3 b = {0.2f, 0.2f, 0.4f};
+  Vec3 e = {1.424264f, 0.2f, 0.141421f};
+  Vec3 r = TransformPoint(a, b);
+  assert_true(Vec3EqualApprox(r, e));
 }
 
 void test_TransformVec3(void** state) {
   UNUSED(state);
+  Transform a = {
+      .position = {1.0f, 0.0f, 0.0f},
+      .rotation = QuatMakeAngleAxis(FDeg2Rad(45.0f), Vec3Up),
+      .scale = Vec3One,
+  };
+  Vec3 b = {0.2f, 0.2f, 0.4f};
+  Vec3 e = {0.424264f, 0.2f, 0.141421f};
+  Vec3 r = TransformVec3(a, b);
+  assert_true(Vec3EqualApprox(r, e));
 }
 
 int main() {

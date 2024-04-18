@@ -13,47 +13,47 @@ float* QuatFloats(Quat* quat) {
 
 Quat QuatMakeAngleAxis(float angle, Vec3 axis) {
   Vec3 norm = Vec3Norm(axis);
-  float s = sinf(angle * 0.5f);
+  float l = Vec3Len(axis);
+  if (l == 0) {
+    return (Quat) {0};
+  }
+
+  float sin_angle = sinf(angle * 0.5f);
+  float cos_angle = cosf(angle * 0.5f);
+  float s = sin_angle / l;
   return (Quat){
       .x = norm.x * s,
       .y = norm.y * s,
       .z = norm.z * s,
-      .w = cosf(angle * 0.5f),
+      .w = cos_angle,
   };
 }
 
 Quat QuatMakeFromTo(Vec3 from, Vec3 to) {
-  Vec3 fromNorm = Vec3Norm(from);
-  Vec3 toNorm = Vec3Norm(to);
-  float fromToDot = Vec3Dot(fromNorm, toNorm);
-  if (fromToDot == 1.0f) {
-    return QuatIdentity;
-  } else if (fromToDot == -1.0f) {
-    Vec3 ortho = {1.0f, 0.0f, 0.0f};
-    if (fabsf(fromNorm.y) < fabsf(fromNorm.x)) {
-      ortho = (Vec3){0.0f, 1.0f, 0.0f};
-    }
-    if (fabsf(fromNorm.z) < fabsf(fromNorm.y) &&
-        fabsf(fromNorm.z) < fabsf(fromNorm.x)) {
-      ortho = (Vec3){0.0f, 0.0f, 1.0f};
-    }
+  Vec3 c = Vec3Cross(from, to);
+  float d = Vec3Dot(from, to);
 
-    Vec3 axis = Vec3Norm(Vec3Cross(fromNorm, ortho));
-    return (Quat){axis.x, axis.y, axis.z, 0};
+  if (d < -1.0f + XMATH_EPSILON) {
+    return (Quat) {0.0f, 1.0f, 0.0f, 0.0f};
   }
 
-  Vec3 half = Vec3Norm(Vec3Add(fromNorm, toNorm));
-  Vec3 axis = Vec3Cross(fromNorm, half);
-  return (Quat){axis.x, axis.y, axis.z, Vec3Dot(fromNorm, half)};
+  float s = sqrtf((1.0f + d) * 2.0f);
+  float rs = 1.0f / s;
+  return (Quat) {
+      .x = c.x * rs,
+      .y = c.y * rs,
+      .z = c.z * rs,
+      .w = s * 0.5f,
+  };
 }
 
-Vec3 QuatGetAxis(Quat quat) {
-  Vec3 v = {quat.x, quat.y, quat.z};
+Vec3 QuatGetAxis(Quat q) {
+  Vec3 v = {q.x, q.y, q.z};
   return Vec3Norm(v);
 }
 
-float QuatGetAngle(Quat quat) {
-  return 2.0f * acosf(quat.w);
+float QuatGetAngle(Quat q) {
+  return 2.0f * acosf(q.w);
 }
 
 Vec3 QuatGetImgPart(Quat q) {
@@ -200,7 +200,7 @@ Quat QuatLookRotation(Vec3 dir, Vec3 up) {
 Mat4 QuatToMat4(Quat q) {
   Vec3 r = QuatTransformVec3(q, Vec3Right);
   Vec3 u = QuatTransformVec3(q, Vec3Up);
-  Vec3 f = QuatTransformVec3(q, Vec3Backward);
+  Vec3 f = QuatTransformVec3(q, Vec3Back);
   // clang-format off
   return (Mat4){
      r.x,  r.y,  r.z, 0.0f,

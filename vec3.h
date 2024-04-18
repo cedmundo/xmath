@@ -41,7 +41,7 @@ static const Vec3 Vec3Right = {1.0f, 0.0f, 0.0f};
 static const Vec3 Vec3Forward = {0.0f, 0.0f, -1.0f};
 
 //! @brief a Vec3 representing the general backward direction
-static const Vec3 Vec3Backward = {0.0f, 0.0f, 1.0f};
+static const Vec3 Vec3Back = {0.0f, 0.0f, 1.0f};
 
 /**
  * @brief Get the consecutive floating values from a Vec3.
@@ -74,6 +74,14 @@ Vec3 Vec3Add(Vec3 a, Vec3 b);
  * @return the difference of each element's components.
  */
 Vec3 Vec3Sub(Vec3 a, Vec3 b);
+
+/**
+ * @brief Multiply each component of a with its equivalent in b.
+ * @param a base value (unaffected).
+ * @param b scale value (unaffected).
+ * @return inner multiplication of both a and b components.
+ */
+Vec3 Vec3InnerMul(Vec3 a, Vec3 b);
 
 /**
  * @brief Standard 3d vector scale.

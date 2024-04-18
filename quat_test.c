@@ -48,26 +48,32 @@ static void test_QuatMakeFromTo(void** state) {
   Quat q = QuatMakeFromTo(from, to);
   Quat e = {0.707106709f, 0.0f, 0.0f, 0.707106709f};
   assert_true(QuatEqualApprox(q, e));
+
+  from = Vec3Norm(Vec3Back);
+  to = Vec3Norm(Vec3Forward);
+  q = QuatMakeFromTo(from, to);
+  e = (Quat){0.0f, 1.0f, 0.0f, 0.0f};
+  assert_true(QuatEqualApprox(q, e));
 }
 
 static void test_QuatGet(void** state) {
   UNUSED(state);
 
-  Quat q = {0.23f, 0.28f, 0.31f, 0.88f};
+  Quat q = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
   Vec3 qAxis = QuatGetAxis(q);
-  Vec3 eAxis = {0.48231706f, 0.587168574f, 0.650079489f};
+  Vec3 eAxis = {0.912871f, 0.365148f, 0.182574f};
   assert_true(Vec3EqualApprox(qAxis, eAxis));
 
   float qAngle = QuatGetAngle(q);
-  float eAngle = 0.989868253f;
+  float eAngle = 0.61086535453796f;
   assert_true(FEqualApprox(qAngle, eAngle));
 
   Vec3 qImg = QuatGetImgPart(q);
-  Vec3 eImg = {0.23f, 0.28f, 0.31f};
+  Vec3 eImg = {0.274506f, 0.109802f, 0.054901f};
   assert_true(Vec3EqualApprox(qImg, eImg));
 
   float qReal = QuatGetRealPart(q);
-  float eReal = 0.88f;
+  float eReal = 0.953717f;
   assert_true(FEqualApprox(qReal, eReal));
 }
 
@@ -111,23 +117,37 @@ static void test_QuatNeg(void** state) {
 
 static void test_QuatSameOrientation(void** state) {
   UNUSED(state);
+
+  Quat a = QuatMakeAngleAxis(FDeg2Rad(360.0f), Vec3Forward);
+  Quat b = QuatMakeAngleAxis(FDeg2Rad(0.0f), Vec3Forward);
+  assert_true(QuatSameOrientation(a, b));
+
+  a = QuatMakeAngleAxis(FDeg2Rad(90.0f), Vec3Forward);
+  b = QuatMakeAngleAxis(FDeg2Rad(180.0f), Vec3Forward);
+  assert_false(QuatSameOrientation(a, b));
 }
 
 static void test_QuatDot(void** state) {
   UNUSED(state);
 
-  Quat a = {0.79f, 0.47f, 0.23f, 0.31f};
-  Quat b = {0.30f, 0.56f, 0.30f, 0.55f};
-  float e = 0.7397f;
+  Quat a = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
+  Quat b = {-0.033477f, 0.044637f, 0.066955f, 0.996195f};
+  float e = 0.94947510957718f;
   float r = QuatDot(a, b);
+  assert_true(FEqualApprox(e, r));
+
+  a = QuatMakeAngleAxis(0.0f, Vec3Forward);
+  b = QuatMakeAngleAxis(0.0f, Vec3Back);
+  e = 1.0f;
+  r = QuatDot(a, b);
   assert_true(FEqualApprox(e, r));
 }
 
 static void test_QuatSqrLen(void** state) {
   UNUSED(state);
 
-  Quat a = {0.21f, 0.76f, 0.29f, 0.33f};
-  float e = 0.8147f;
+  Quat a = {0.137253f, 0.054901f, 0.027451f, 0.476858f};
+  float e = 0.25f;
   float r = QuatSqrLen(a);
   assert_true(FEqualApprox(e, r));
 }
@@ -135,8 +155,8 @@ static void test_QuatSqrLen(void** state) {
 static void test_QuatLen(void** state) {
   UNUSED(state);
 
-  Quat a = {0.21f, 0.76f, 0.29f, 0.33f};
-  float e = 0.902607f;
+  Quat a = {0.137253f, 0.054901f, 0.027451f, 0.476858f};
+  float e = 0.5f;
   float r = QuatLen(a);
   assert_true(FEqualApprox(e, r));
 }
@@ -144,8 +164,8 @@ static void test_QuatLen(void** state) {
 static void test_QuatNorm(void** state) {
   UNUSED(state);
 
-  Quat a = {0.210f, 0.760f, 0.290f, 0.330f};
-  Quat e = {0.232659295f, 0.842005074f, 0.321291417f, 0.3656075f};
+  Quat a = {0.631363f, 0.252545f, 0.126273f, 2.193549f};
+  Quat e = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
   Quat r = QuatNorm(a);
   assert_true(QuatEqualApprox(e, r));
 }
@@ -162,8 +182,8 @@ static void test_QuatConjugate(void** state) {
 static void test_QuatInvert(void** state) {
   UNUSED(state);
 
-  Quat a = {0.210f, 0.760f, 0.290f, 0.330f};
-  Quat e = {-0.257763594f, -0.932858765f, -0.355959237f, 0.405057102f};
+  Quat a = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
+  Quat e = {-0.274506f, -0.109802f, -0.054901f, 0.953717f};
   Quat r = QuatInvert(a);
   assert_true(QuatEqualApprox(e, r));
 }
@@ -181,10 +201,16 @@ static void test_QuatCross(void** state) {
 static void test_QuatTransformVec3(void** state) {
   UNUSED(state);
 
-  Quat a = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat a = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
   Vec3 b = {0.3f, 0.3f, 0.3f};
-  Vec3 e = {-0.11748001f, 0.239640027f, 0.442200005f};
+  Vec3 e = {0.349501f, 0.149017f, 0.354462f};
   Vec3 r = QuatTransformVec3(a, b);
+  assert_true(Vec3EqualApprox(r, e));
+
+  a = (Quat){-0.033477f, 0.044637f, 0.066955f, 0.996195f};
+  b = (Vec3){0.0f, 0.0f, 1.0f};
+  e = (Vec3){0.084451f, 0.072677f, 0.993774f};
+  r = (Vec3)QuatTransformVec3(a, b);
   assert_true(Vec3EqualApprox(r, e));
 }
 
@@ -234,13 +260,13 @@ static void test_QuatLookRotation(void** state) {
 static void test_QuatToMat4(void** state) {
   UNUSED(state);
 
-  Quat q = {0.23f, 0.31f, 0.79f, 0.47f};
+  Quat q = {0.274506f, 0.109802f, 0.054901f, 0.953717f};
   Mat4 r = QuatToMat4(q);
   // clang-format off
   Mat4 e = {
-    -0.446400017f,  0.885200024f, 0.0719999969f, 0.000f,
-    -0.600000024f, -0.360000014f, 0.70600003f,   0.000f,
-     0.654800057f,  0.273599982f, 0.69600004f,   0.000f,
+    0.969859f, 0.165003f, -0.179299f, 0.000f,
+    -0.044437f, 0.843265f, 0.535658f,   0.000f,
+     0.239581f, -0.511545f, 0.82518f,   0.000f,
      0.000f,  0.000f, 0.000f, 1.000f,
   };
   // clang-format on

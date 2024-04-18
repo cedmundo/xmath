@@ -51,17 +51,17 @@ Quat QuatMakeFromTo(Vec3 from, Vec3 to);
 
 /**
  * @brief Get the axis of a quaternion.
- * @param quat valid quaternion.
+ * @param q valid quaternion.
  * @return normalized Vec3 of the axis values.
  */
-Vec3 QuatGetAxis(Quat quat);
+Vec3 QuatGetAxis(Quat q);
 
 /**
  * @brief Get the angle of a quaternion.
- * @param quat valid quaternion.
+ * @param q valid quaternion.
  * @return the angle of quaternion as radians.
  */
-float QuatGetAngle(Quat quat);
+float QuatGetAngle(Quat q);
 
 /**
  * @brief Get the imaginary part of a quaternion.
