@@ -12,5 +12,8 @@
 
 #include "mat4.h"
 #include "quat.h"
+#include "transform.h"
+
+#include "beizer.h"
 
 #endif /* XMATH_H */
