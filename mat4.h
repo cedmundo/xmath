@@ -1,5 +1,5 @@
 /**
- * @file vec4.h
+ * @file mat4.h
  * @brief Definitions, functions and utilities for 4x4 matrices.
  */
 #ifndef XMATH_MAT4_H
