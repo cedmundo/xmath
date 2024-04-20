@@ -39,6 +39,7 @@ target_sources(xmath
 if(NOT WIN32 AND HAVE_M)
   target_link_libraries(xmath PRIVATE m)
 endif()
+target_include_directories(xmath PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
 if(BUILD_TESTS)
   enable_testing()
@@ -63,7 +64,7 @@ list(JOIN HEADERS ";" PUBLIC_HEADERS)
 set_target_properties(xmath PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
 install(
   TARGETS xmath
-  PUBLIC_HEADER DESTINATION xmath
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/xmath"
 )
 
 if(BUILD_DOCS)

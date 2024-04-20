@@ -14,6 +14,6 @@
 #include "quat.h"
 #include "transform.h"
 
-#include "beizer.h"
+#include "curves.h"
 
 #endif /* XMATH_H */
